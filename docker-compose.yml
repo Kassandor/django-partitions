@@ -1,0 +1,24 @@
+volumes:
+  pgdata:
+
+services:
+  pgdb:
+    image: registry.astralinux.ru/library/astra/ubi18-postgresql15:latest
+    container_name: pgdb
+    restart: on-failure
+    volumes:
+      - pgdata:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_USER: 'django-partitions'
+      POSTGRES_PASSWORD: '1234'
+      POSTGRES_DB: 'django-partitions'
+
+    # Для доступа снаружи
+    ports:
+      - "15432:5432"
+
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U django-partitions -d django-partitions" ]
+      interval: 5s
+      timeout: 10s
+      retries: 3
